@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0);
+import { Chat } from './pages/chat';
 
-  return <div>Hello World</div>;
+function App() {
+  return <Chat />;
 }
 
 export default App;

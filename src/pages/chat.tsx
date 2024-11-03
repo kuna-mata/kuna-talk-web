@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
-import { createMessage } from '../api/messages';
-import { CreateMessageDto } from '../dto/message.dto';
+import { createMessage, readMessage } from '../api/messages';
+import { CreateMessageDto, ReadMessageDto } from '../dto/message.dto';
 
 export function Chat() {
   const [newMessage, setNewMessage] = useState<string>('');
@@ -12,6 +12,7 @@ export function Chat() {
       const receiverId = 'qwer';
       const messageId = senderId + receiverId;
 
+      console.log(newMessage);
       const dto: CreateMessageDto = {
         senderId: senderId,
         receiverId: receiverId,
@@ -21,8 +22,24 @@ export function Chat() {
         updatedAt: new Date(),
       };
 
-      await createMessage(dto);
+      const { data, status } = await createMessage(dto);
+
+      if (status === 201) {
+        const fetchDto: ReadMessageDto = {
+          senderId: data.senderId,
+          receiverId: data.receiverId,
+          messageId: data.messageId,
+        };
+
+        setTimeout(() => {
+          fetchMessage(fetchDto);
+        }, 2000);
+      }
     }
+  }, []);
+
+  const fetchMessage = useCallback(async (dto: ReadMessageDto) => {
+    await readMessage(dto);
   }, []);
 
   return (
@@ -38,7 +55,6 @@ export function Chat() {
 
         <button onClick={sendMessage}>Send</button>
       </div>
-      <div>{newMessage}</div>
     </div>
   );
 }

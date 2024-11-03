@@ -6,3 +6,9 @@ export interface CreateMessageDto {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ReadMessageDto {
+  senderId: string;
+  receiverId: string;
+  messageId: string;
+}

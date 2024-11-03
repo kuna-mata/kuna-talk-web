@@ -1,9 +1,30 @@
+import { AxiosResponse } from 'axios';
 import { axiosClient } from '../config/axios';
-import { CreateMessageDto } from '../dto/message.dto';
+import { CreateMessageDto, ReadMessageDto } from '../dto/message.dto';
+import { Message } from '../types/api/message';
 
-export async function createMessage(dto: CreateMessageDto) {
+export async function createMessage(
+  dto: CreateMessageDto,
+): Promise<AxiosResponse<Message>> {
   try {
     const response = await axiosClient.post('/chat', dto);
+    console.log(response);
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function readMessage(
+  dto: ReadMessageDto,
+): Promise<AxiosResponse<Message>> {
+  try {
+    const response = await axiosClient.get('/chat', {
+      data: dto,
+    });
+
     console.log(response);
 
     return response;

@@ -1,28 +1,41 @@
 import { useState, useCallback } from 'react';
 
+import { AxiosResponse } from 'axios';
+
 import { createMessage, readMessage } from '../api/messages';
 import { CreateMessageDto, ReadMessageDto } from '../dto/message.dto';
+import { Message } from '../types/api/message';
+import { delay, randomId } from '../utils';
 
 export function Chat() {
   const [newMessage, setNewMessage] = useState<string>('');
+  const [messages, setMessages] = useState<AxiosResponse<Message>[]>([]);
+
+  const fetchMessage = useCallback(async (dto: ReadMessageDto) => {
+    const message = await readMessage(dto);
+
+    if (message) {
+      setMessages((prev) => [...prev, message]);
+    }
+  }, []);
 
   const sendMessage = useCallback(async () => {
     if (newMessage) {
-      const senderId = '1234';
-      const receiverId = 'qwer';
-      const messageId = senderId + receiverId;
-
       console.log(newMessage);
+
       const dto: CreateMessageDto = {
-        senderId: senderId,
-        receiverId: receiverId,
-        messageId: messageId,
+        senderId: `${Math.random().toString(36).substring(2, 9)}-${Date.now()}`,
+        receiverId: `${Math.random()
+          .toString(36)
+          .substring(2, 9)}-${Date.now()}`,
+        messageId: randomId,
         message: newMessage,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
       const { data, status } = await createMessage(dto);
+      setNewMessage('');
 
       if (status === 201) {
         const fetchDto: ReadMessageDto = {
@@ -31,16 +44,11 @@ export function Chat() {
           messageId: data.messageId,
         };
 
-        setTimeout(() => {
-          fetchMessage(fetchDto);
-        }, 2000);
+        await delay(1000);
+        await fetchMessage(fetchDto);
       }
     }
-  }, []);
-
-  const fetchMessage = useCallback(async (dto: ReadMessageDto) => {
-    await readMessage(dto);
-  }, []);
+  }, [fetchMessage, newMessage]);
 
   return (
     <div>
@@ -54,6 +62,23 @@ export function Chat() {
         />
 
         <button onClick={sendMessage}>Send</button>
+
+        {messages.length > 0
+          ? messages.map((value: AxiosResponse<Message>, index: number) => {
+              const data = value.data;
+
+              return (
+                <div key={index}>
+                  <div>
+                    <strong>Sender: {data.senderId}</strong>
+                    <br />
+                    <strong>Receiver: {data.receiverId}</strong>
+                    <p>Message: {data.message}</p>
+                  </div>
+                </div>
+              );
+            })
+          : null}
       </div>
     </div>
   );

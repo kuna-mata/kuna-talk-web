@@ -22,7 +22,7 @@ export async function readMessage(
 ): Promise<AxiosResponse<Message>> {
   try {
     const response = await axiosClient.get('/chat', {
-      data: dto,
+      params: dto,
     });
 
     console.log(response);

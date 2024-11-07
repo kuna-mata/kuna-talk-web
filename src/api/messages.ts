@@ -1,6 +1,11 @@
 import { AxiosResponse } from 'axios';
+
 import { axiosClient } from '../config/axios';
-import { CreateMessageDto, ReadMessageDto } from '../dto/message.dto';
+import {
+  CreateMessageDto,
+  GetAllMessagesDto,
+  GetMessageDto,
+} from '../dto/message.dto';
 import { Message } from '../types/api/message';
 
 export async function createMessage(
@@ -17,9 +22,9 @@ export async function createMessage(
   }
 }
 
-export async function readMessage(
-  dto: ReadMessageDto,
-): Promise<AxiosResponse<Message>> {
+export async function getAllMessages(
+  dto: GetAllMessagesDto,
+): Promise<Message[]> {
   try {
     const response = await axiosClient.get('/chat', {
       params: dto,
@@ -27,7 +32,22 @@ export async function readMessage(
 
     console.log(response);
 
-    return response;
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getMessage(dto: GetMessageDto): Promise<Message> {
+  try {
+    const response = await axiosClient.get('/chat', {
+      params: dto,
+    });
+
+    console.log(response);
+
+    return response.data;
   } catch (error) {
     console.log(error);
     throw error;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Chat } from './pages/chat';
+import { Chat } from './pages/Chat';
 
 function App() {
   return <Chat />;

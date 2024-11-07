@@ -7,7 +7,13 @@ export interface CreateMessageDto {
   updatedAt: Date;
 }
 
-export interface ReadMessageDto {
+export interface GetAllMessagesDto {
+  senderId: string;
+  receiverId: string;
+  createdAt: Date;
+}
+
+export interface GetMessageDto {
   senderId: string;
   receiverId: string;
   messageId: string;

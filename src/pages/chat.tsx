@@ -1,21 +1,19 @@
 import { useState, useCallback } from 'react';
 
-import { AxiosResponse } from 'axios';
-
-import { createMessage, readMessage } from '../api/messages';
-import { CreateMessageDto, ReadMessageDto } from '../dto/message.dto';
+import { createMessage, getAllMessages } from '../api/messages';
+import { CreateMessageDto, GetAllMessagesDto } from '../dto/message.dto';
 import { Message } from '../types/api/message';
 import { delay, randomId } from '../utils';
 
 export function Chat() {
   const [newMessage, setNewMessage] = useState<string>('');
-  const [messages, setMessages] = useState<AxiosResponse<Message>[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
-  const fetchMessage = useCallback(async (dto: ReadMessageDto) => {
-    const message = await readMessage(dto);
+  const fetchMessage = useCallback(async (dto: GetAllMessagesDto) => {
+    const messages = await getAllMessages(dto);
 
-    if (message) {
-      setMessages((prev) => [...prev, message]);
+    if (messages) {
+      setMessages((prev) => [...prev, ...messages]);
     }
   }, []);
 
@@ -38,10 +36,10 @@ export function Chat() {
       setNewMessage('');
 
       if (status === 201) {
-        const fetchDto: ReadMessageDto = {
+        const fetchDto: GetAllMessagesDto = {
           senderId: data.senderId,
           receiverId: data.receiverId,
-          messageId: data.messageId,
+          createdAt: data.createdAt,
         };
 
         await delay(1000);
@@ -64,16 +62,14 @@ export function Chat() {
         <button onClick={sendMessage}>Send</button>
 
         {messages.length > 0
-          ? messages.map((value: AxiosResponse<Message>, index: number) => {
-              const data = value.data;
-
+          ? messages.map((value: Message, index: number) => {
               return (
                 <div key={index}>
                   <div>
-                    <strong>Sender: {data.senderId}</strong>
+                    <strong>Sender: {value.senderId}</strong>
                     <br />
-                    <strong>Receiver: {data.receiverId}</strong>
-                    <p>Message: {data.message}</p>
+                    <strong>Receiver: {value.receiverId}</strong>
+                    <p>Message: {value.message}</p>
                   </div>
                 </div>
               );

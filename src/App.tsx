@@ -1,5 +1,9 @@
+import { useState } from 'react';
+
+import { Chat } from './pages/chat';
+
 function App() {
-  return <div>Hello World</div>;
+  return <Chat />;
 }
 
 export default App;

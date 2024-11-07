@@ -13,7 +13,7 @@ export interface GetAllMessagesDto {
   createdAt: Date;
 }
 
-export interface ReadMessageDto {
+export interface GetMessageDto {
   senderId: string;
   receiverId: string;
   messageId: string;
